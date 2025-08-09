@@ -8,12 +8,14 @@ import os
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from typing import List, Dict
+from agents.agent_chain import AgentChainOrchestrator
 
 load_dotenv()
 
 app = FastAPI()
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+agent_chain = AgentChainOrchestrator()
 
 app.add_middleware(
     CORSMiddleware,
@@ -95,6 +97,14 @@ class ChatRequest(BaseModel):
     prompt: str
     history: List[ChatMessage] = []
 
+class NewsAnalysisRequest(BaseModel):
+    question: str
+
+class NewsAnalysisResponse(BaseModel):
+    success: bool
+    data: Dict = None
+    error: Dict = None
+
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """HTTP endpoint for Streamlit chat interface"""
@@ -129,6 +139,31 @@ async def chat_endpoint(request: ChatRequest):
         
     except Exception as e:
         return {"error": str(e)}
+
+@app.post("/analyze-news", response_model=NewsAnalysisResponse)
+async def analyze_news(request: NewsAnalysisRequest):
+    """
+    Analyze current events using the agent chain system.
+    
+    Processes a natural language question through:
+    1. Transformer Agent - extracts keywords
+    2. Researcher Agent - fetches relevant articles from reputable sources
+    3. Summarizer Agent - creates coherent summary
+    4. Keyword Extractor Agent - identifies countries and relationships
+    5. Divider Agent - creates structured paragraph output
+    """
+    try:
+        result = await agent_chain.process_question(request.question)
+        return NewsAnalysisResponse(
+            success=result["success"],
+            data=result.get("data"),
+            error=result.get("error")
+        )
+    except Exception as e:
+        return NewsAnalysisResponse(
+            success=False,
+            error={"type": "server_error", "message": str(e)}
+        )
 
 @app.get("/health")
 async def health_check():

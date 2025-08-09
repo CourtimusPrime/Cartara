@@ -8,3 +8,4 @@ streamlit
 streamlit-chat
 requests
 asyncio-mqtt
+aiohttp

@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+dist
+build
+.env*
+*.log
+.DS_Store
+backend/__pycache__
+backend/agents/__pycache__
+*.pyc

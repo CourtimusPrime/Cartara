@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,10 +36,14 @@ export default function Home() {
   // Function to determine line color based on relationship type
   const getRelationshipColor = (relationship: string): string => {
     const rel = relationship.toLowerCase();
-    
+
     if (rel.includes('war') || rel.includes('conflict') || rel.includes('hostile')) {
       return 'rgba(255, 0, 0, 0.8)'; // Red for conflict
-    } else if (rel.includes('alliance') || rel.includes('cooperation') || rel.includes('partnership')) {
+    } else if (
+      rel.includes('alliance') ||
+      rel.includes('cooperation') ||
+      rel.includes('partnership')
+    ) {
       return 'rgba(0, 255, 0, 0.8)'; // Green for positive relations
     } else if (rel.includes('trade') || rel.includes('economic') || rel.includes('business')) {
       return 'rgba(255, 255, 0, 0.8)'; // Yellow for economic relations
@@ -54,26 +57,32 @@ export default function Home() {
   };
 
   // Handle countries detected from prompt analysis
-  const handleCountriesDetected = (detectedCountry1: string, detectedCountry2: string, relationship: string) => {
+  const handleCountriesDetected = (
+    detectedCountry1: string,
+    detectedCountry2: string,
+    relationship: string
+  ) => {
     // Clear any previous state to prevent contamination
     setCountry1('');
     setCountry2('');
     setIsAIPopulated(false);
-    
+
     // Update with new countries after clearing
     setTimeout(() => {
       setCountry1(detectedCountry1);
       setCountry2(detectedCountry2);
-      
+
       // Set line color based on relationship
       const relationshipColor = getRelationshipColor(relationship);
       setLineColor(relationshipColor);
-      
+
       // Mark as AI populated and clear after 3 seconds
       setIsAIPopulated(true);
       setTimeout(() => setIsAIPopulated(false), 3000);
-      
-      console.log(`🤖 AI detected: ${detectedCountry1} ↔ ${detectedCountry2} (${relationship}) - Color: ${relationshipColor}`);
+
+      console.log(
+        `🤖 AI detected: ${detectedCountry1} ↔ ${detectedCountry2} (${relationship}) - Color: ${relationshipColor}`
+      );
     }, 100);
   };
 
@@ -100,7 +109,10 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* Globe Background */}
-      <div className="absolute top-0 left-0 w-full h-full z-0" onDragStart={(e) => e.preventDefault()}>
+      <div
+        className="absolute top-0 left-0 w-full h-full z-0"
+        onDragStart={e => e.preventDefault()}
+      >
         <Globe
           country1={country1}
           country2={country2}
@@ -119,34 +131,34 @@ export default function Home() {
               🤖 AI Detected
             </div>
           )}
-          
+
           <div className="relative">
             <input
               type="text"
               placeholder="🌍 Country 1"
               value={country1}
-              onChange={(e) => handleManualCountry1Change(e.target.value)}
+              onChange={e => handleManualCountry1Change(e.target.value)}
               className={`px-3 py-2 enhanced-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
               }`}
             />
           </div>
-          
+
           <div className="relative">
             <input
               type="text"
               placeholder="🌍 Country 2"
               value={country2}
-              onChange={(e) => handleManualCountry2Change(e.target.value)}
+              onChange={e => handleManualCountry2Change(e.target.value)}
               className={`px-3 py-2 enhanced-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
               }`}
             />
           </div>
-          
+
           <select
             value={lineColor}
-            onChange={(e) => setLineColor(e.target.value)}
+            onChange={e => setLineColor(e.target.value)}
             className={`px-3 py-2 enhanced-input rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
             }`}

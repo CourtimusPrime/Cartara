@@ -27,10 +27,7 @@ export const CountryTooltip: React.FC<CountryTooltipProps> = ({ data }) => {
           <p className="text-xs text-gray-400 mb-1">Sources:</p>
           <div className="flex flex-wrap gap-1">
             {data.sources.map((source, index) => (
-              <span
-                key={index}
-                className="text-xs bg-gray-700 px-2 py-1 rounded"
-              >
+              <span key={index} className="text-xs bg-gray-700 px-2 py-1 rounded">
                 {source}
               </span>
             ))}
@@ -65,10 +62,7 @@ export const RelationshipTooltip: React.FC<RelationshipTooltipProps> = ({ data }
           <p className="text-xs text-gray-400 mb-1">Sources:</p>
           <div className="flex flex-wrap gap-1">
             {data.sources.map((source, index) => (
-              <span
-                key={index}
-                className="text-xs bg-gray-700 px-2 py-1 rounded"
-              >
+              <span key={index} className="text-xs bg-gray-700 px-2 py-1 rounded">
                 {source}
               </span>
             ))}

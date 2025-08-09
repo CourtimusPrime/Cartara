@@ -1,5 +1,6 @@
 import os
 from typing import List
+
 from .config_loader import config
 
 # Load from config file first, then fall back to environment variables
@@ -26,7 +27,7 @@ if not REPUTABLE_SOURCES:
         "nbcnews.com",
         "politico.com",
         "axios.com",
-        "bloomberg.com"
+        "bloomberg.com",
     ]
 
 MAX_ARTICLES = 5

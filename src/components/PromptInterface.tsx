@@ -79,8 +79,8 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
         // Extract countries and relationship for globe visualization
         if (result.data.country_1 && result.data.country_2) {
           onCountriesDetected(
-            result.data.country_1, 
-            result.data.country_2, 
+            result.data.country_1,
+            result.data.country_2,
             result.data.relationship || 'diplomatic relations'
           );
         }

@@ -38,7 +38,7 @@ export const useTooltipData = () => {
 
     try {
       const question = `What's the current situation between ${country1} and ${country2}?`;
-      
+
       const response = await fetch('http://localhost:8000/analyze-news', {
         method: 'POST',
         headers: {
@@ -55,7 +55,7 @@ export const useTooltipData = () => {
 
       if (result.success && result.data) {
         const countryData: Record<string, CountryTooltipData> = {};
-        
+
         // Add country 1 data
         if (result.data.country_1 && result.data.country_1_paragraph) {
           countryData[result.data.country_1.toLowerCase()] = {
@@ -94,24 +94,24 @@ export const useTooltipData = () => {
       }
     } catch (error) {
       console.error('Error fetching tooltip data:', error);
-      
+
       // Fallback to sample data when API is not available
       const key1 = country1.toLowerCase();
       const key2 = country2.toLowerCase();
-      const relationshipKey = `${key1}-${key2}` in sampleRelationshipData ? 
-        `${key1}-${key2}` : `${key2}-${key1}`;
-      
+      const relationshipKey =
+        `${key1}-${key2}` in sampleRelationshipData ? `${key1}-${key2}` : `${key2}-${key1}`;
+
       const fallbackCountryData: Record<string, CountryTooltipData> = {};
-      
+
       if (sampleCountryData[key1]) {
         fallbackCountryData[key1] = sampleCountryData[key1];
       }
       if (sampleCountryData[key2]) {
         fallbackCountryData[key2] = sampleCountryData[key2];
       }
-      
+
       const fallbackRelationshipData = sampleRelationshipData[relationshipKey] || null;
-      
+
       if (Object.keys(fallbackCountryData).length > 0 || fallbackRelationshipData) {
         setTooltipState({
           countryData: fallbackCountryData,
@@ -129,10 +129,13 @@ export const useTooltipData = () => {
     }
   }, []);
 
-  const getCountryTooltip = useCallback((countryName: string): CountryTooltipData | null => {
-    const key = countryName.toLowerCase();
-    return tooltipState.countryData[key] || null;
-  }, [tooltipState.countryData]);
+  const getCountryTooltip = useCallback(
+    (countryName: string): CountryTooltipData | null => {
+      const key = countryName.toLowerCase();
+      return tooltipState.countryData[key] || null;
+    },
+    [tooltipState.countryData]
+  );
 
   const getRelationshipTooltip = useCallback((): RelationshipTooltipData | null => {
     return tooltipState.relationshipData;

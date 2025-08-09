@@ -24,6 +24,30 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('cartara-chat-messages');
+    if (savedMessages) {
+      try {
+        const parsed = JSON.parse(savedMessages);
+        setMessages(parsed.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        })));
+      } catch (e) {
+        console.error('Failed to load saved messages:', e);
+      }
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('cartara-chat-messages', JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // Handle WebSocket connection
   useEffect(() => {
     if (isOpen && !ws.current) {
       connectWebSocket();
@@ -94,13 +118,50 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
     e.preventDefault();
     if (!prompt.trim() || !ws.current || !isConnected) return;
 
+    // If there's a current streaming response, save it to messages before sending new message
+    if (currentResponse.trim()) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: currentResponse.trim(),
+          timestamp: new Date(),
+          id: `assistant-${Date.now()}-${Math.random()}`
+        }
+      ]);
+    }
+
     const userMessage: Message = {
       role: 'user',
       content: prompt.trim(),
       timestamp: new Date(),
-      id: Date.now().toString()
+      id: `user-${Date.now()}-${Math.random()}`
     };
 
+    // Get current messages including any streaming response
+    const currentMessages = currentResponse.trim() ? [
+      ...messages,
+      {
+        role: 'assistant' as const,
+        content: currentResponse.trim(),
+        timestamp: new Date(),
+        id: `temp-assistant-${Date.now()}`
+      }
+    ] : messages;
+    
+    // Build conversation history for context (last 5 message pairs = 10 messages)
+    const conversationHistory = currentMessages.slice(-10).map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }));
+    
+    // Send the message with full conversation context
+    ws.current.send(JSON.stringify({ 
+      prompt: prompt.trim(),
+      history: conversationHistory
+    }));
+
+    // Update UI state
     setMessages(prev => [...prev, userMessage]);
     setPrompt('');
     setCurrentResponse('');
@@ -109,8 +170,6 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-
-    ws.current.send(JSON.stringify({ prompt: prompt.trim() }));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -131,6 +190,7 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
     setMessages([]);
     setCurrentResponse('');
     setIsTyping(false);
+    localStorage.removeItem('cartara-chat-messages');
   };
 
   const reconnect = () => {
@@ -149,8 +209,8 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
   };
 
   return (
-    <div className={`fixed top-0 right-0 h-full w-96 bg-gray-900/95 backdrop-blur-sm shadow-2xl transform transition-transform duration-300 z-40 ${
-      isOpen ? 'translate-x-0' : 'translate-x-full'
+    <div className={`fixed top-0 left-0 h-full w-96 bg-gray-900/95 backdrop-blur-sm shadow-2xl transform transition-transform duration-300 z-40 ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
       <div className="h-full flex flex-col">
         {/* Header */}
@@ -159,7 +219,7 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
             <div className={`w-3 h-3 rounded-full ${
               isConnected ? 'bg-green-500' : 'bg-red-500'
             }`} />
-            <h2 className="text-white font-semibold">AI Assistant</h2>
+            <h2 className="text-white font-semibold">ChatGPT-5</h2>
             <span className="text-gray-400 text-sm">
               {isConnected ? 'Connected' : 'Disconnected'}
             </span>
@@ -200,9 +260,9 @@ export default function Chat({ isOpen, onToggle }: ChatProps) {
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-gray-400">
               <div className="text-center">
-                <div className="text-4xl mb-4">💬</div>
-                <p className="text-lg mb-2">Start a conversation</p>
-                <p className="text-sm">Ask me anything about the globe or any other topic!</p>
+                <div className="text-4xl mb-4">🗺️</div>
+                <p className="text-lg mb-2">Welcome to Cartara</p>
+                <p className="text-sm">Ask me about geopolitics and current events!</p>
               </div>
             </div>
           ) : (

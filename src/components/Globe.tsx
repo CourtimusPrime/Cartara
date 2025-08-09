@@ -2,7 +2,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Globe from 'react-globe.gl';
+import dynamic from 'next/dynamic';
+
+const Globe = dynamic(() => import('react-globe.gl'), { 
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full">Loading Globe...</div>
+});
 import { useDebouncedCallback } from 'use-debounce';
 import * as THREE from 'three';
 
@@ -154,7 +159,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     lng: coords.lng,
     text: coords.name,
     size: 1.5,
-    color: 'yellow',
+    color: 'white',
   }));
 
   return (

@@ -11,7 +11,7 @@ export default function Home() {
   const [countries, setCountries] = useState({ features: [] });
   const [countryCoords, setCountryCoords] = useState([]);
   const [lineColor, setLineColor] = useState('rgba(255, 0, 0, 0.8)');
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(true); // Open by default
 
   useEffect(() => {
     // Fetch country polygons
@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* Globe and main content */}
-      <div className={`transition-all duration-300 ${isChatOpen ? 'mr-96' : 'mr-0'}`}>
+      <div className={`transition-all duration-300 ${isChatOpen ? 'ml-96' : 'ml-0'}`}>
         <div className="absolute top-0 left-0 w-full h-full z-0" onDragStart={(e) => e.preventDefault()}>
           <Globe
             country1={country1}
@@ -55,7 +55,6 @@ export default function Home() {
           />
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center p-8">
-          <h1 className="text-4xl font-bold mb-8 text-white">Country Visualizer</h1>
           <div className="flex gap-4 mb-8">
             <input
               type="text"
@@ -89,8 +88,8 @@ export default function Home() {
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className={`fixed top-4 right-4 z-50 p-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 shadow-lg ${
-          isChatOpen ? 'right-[25rem]' : 'right-4'
+        className={`fixed top-4 left-4 z-50 p-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 shadow-lg ${
+          isChatOpen ? 'left-[25rem]' : 'left-4'
         }`}
         aria-label="Toggle AI Chat"
       >

@@ -4,3 +4,7 @@ uvicorn
 websockets
 openai
 python-dotenv
+streamlit
+streamlit-chat
+requests
+asyncio-mqtt

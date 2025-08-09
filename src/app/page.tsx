@@ -1,7 +1,9 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import Globe from '@/components/Globe';
+import Chat from '@/components/Chat';
 
 export default function Home() {
   const [country1, setCountry1] = useState('');
@@ -79,6 +81,7 @@ export default function Home() {
           </select>
         </div>
       </div>
+      <Chat />
     </main>
   );
 }

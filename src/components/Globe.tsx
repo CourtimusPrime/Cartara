@@ -35,13 +35,10 @@ interface GlobeProps {
 }
 
 export default function GlobeComponent({ country1, country2, countries, countryCoords, lineColor }: GlobeProps) {
-  const globeEl = useRef();
+  const globeEl = useRef<any>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const { 
-    countryData, 
-    relationshipData, 
     isLoading, 
-    error, 
     fetchTooltipData, 
     getCountryTooltip, 
     getRelationshipTooltip 
@@ -74,7 +71,6 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     const globe = globeEl.current;
     if (!globe) return;
 
-    // @ts-ignore
     const scene = globe.scene();
     const starQty = 10000;
     const starGeometry = new THREE.BufferGeometry();
@@ -256,29 +252,25 @@ export default function GlobeComponent({ country1, country2, countries, countryC
 
       const altitude = 2.5 - (distance / 20000); // Simple formula to adjust altitude based on distance
 
-      // @ts-ignore
       globeEl.current.pointOfView({
         lat: centerLat,
         lng: centerLng,
         altitude: altitude < 0.1 ? 0.1 : altitude, // a minimum altitude
       }, 2000); // 2 second transition
     } else if (globeEl.current) {
-        // @ts-ignore
         globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2 }, 2000);
     }
   }, [country1, country2, country1Coords, country2Coords]);
 
-  const handleZoom = (pov) => {
+  const handleZoom = (pov: any) => {
     const { altitude } = pov;
     const minAltitude = 0.8; // Decreased from 0.1
     const maxAltitude = 4;
 
     if (altitude < minAltitude) {
-        // @ts-ignore
-      globeEl.current.pointOfView({ ...pov, altitude: minAltitude });
+        globeEl.current.pointOfView({ ...pov, altitude: minAltitude });
     } else if (altitude > maxAltitude) {
-        // @ts-ignore
-      globeEl.current.pointOfView({ ...pov, altitude: maxAltitude });
+        globeEl.current.pointOfView({ ...pov, altitude: maxAltitude });
     }
   };
 
@@ -293,7 +285,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
   }] : [];
 
   // Create enhanced labels with buffer zones for easier hovering
-  const labelsData = [country1Coords, country2Coords].filter(Boolean).map(coords => ({
+  const labelsData = [country1Coords, country2Coords].filter((coords): coords is CountryCoord => coords !== null).map(coords => ({
     lat: coords.lat,
     lng: coords.lng,
     text: coords.name,
@@ -305,7 +297,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
   }));
 
   // Handle label clicks to show detailed tooltip
-  const handleLabelClick = (label: any) => {
+  const handleLabelClick = (_label: unknown) => {
     if (country1 && country2) {
       fetchTooltipData(country1, country2);
     }
@@ -313,7 +305,6 @@ export default function GlobeComponent({ country1, country2, countries, countryC
 
   return (
     <Globe
-      // @ts-ignore
       ref={globeEl}
       width={size.width}
       height={size.height}
@@ -325,16 +316,16 @@ export default function GlobeComponent({ country1, country2, countries, countryC
       polygonsData={countries.features}
       polygonCapColor={() => 'rgba(0, 0, 0, 0)'}
       polygonSideColor={() => 'rgba(0, 0, 0, 0)'}
-      polygonLabel={renderCountryTooltip}
+      polygonLabel={(d: any) => renderCountryTooltip(d)}
       labelsData={labelsData}
-      labelLat={d => d.lat}
-      labelLng={d => d.lng}
-      labelText={d => d.text}
-      labelSize={d => d.size}
-      labelColor={d => d.color}
-      labelLabel={d => d.tooltip}
+      labelLat={(d: any) => d.lat}
+      labelLng={(d: any) => d.lng}
+      labelText={(d: any) => d.text}
+      labelSize={(d: any) => d.size}
+      labelColor={(d: any) => d.color}
+      labelLabel={(d: any) => d.tooltip}
       labelResolution={4}
-      labelTransitionDuration={500}
+      labelsTransitionDuration={500}
       onLabelClick={handleLabelClick}
       onZoom={handleZoom}
     />

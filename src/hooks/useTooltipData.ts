@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { CountryTooltipData, RelationshipTooltipData, TooltipState } from '@/types/tooltip';
 import { sampleCountryData, sampleRelationshipData } from '@/data/sampleTooltips';
 

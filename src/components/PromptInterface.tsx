@@ -30,7 +30,7 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Handle typing detection
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

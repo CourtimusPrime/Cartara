@@ -10,6 +10,7 @@ const Globe = dynamic(() => import('react-globe.gl'), {
 });
 import { useDebouncedCallback } from 'use-debounce';
 import * as THREE from 'three';
+import { useTooltipData } from '@/hooks/useTooltipData';
 
 interface Country {
   properties: {
@@ -36,6 +37,15 @@ interface GlobeProps {
 export default function GlobeComponent({ country1, country2, countries, countryCoords, lineColor }: GlobeProps) {
   const globeEl = useRef();
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const { 
+    countryData, 
+    relationshipData, 
+    isLoading, 
+    error, 
+    fetchTooltipData, 
+    getCountryTooltip, 
+    getRelationshipTooltip 
+  } = useTooltipData();
 
   const debouncedResize = useDebouncedCallback(() => {
     if (typeof window !== 'undefined') {
@@ -51,6 +61,13 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     window.addEventListener('resize', debouncedResize);
     return () => window.removeEventListener('resize', debouncedResize);
   }, [debouncedResize]);
+
+  // Fetch tooltip data when both countries are provided
+  useEffect(() => {
+    if (country1 && country2) {
+      fetchTooltipData(country1, country2);
+    }
+  }, [country1, country2, fetchTooltipData]);
 
   useEffect(() => {
     // Add stars
@@ -90,6 +107,126 @@ export default function GlobeComponent({ country1, country2, countries, countryC
 
   const country1Coords = getCountryCoords(country1);
   const country2Coords = getCountryCoords(country2);
+
+  // Function to render country tooltips
+  const renderCountryTooltip = (country: Country) => {
+    const countryName = country.properties.ADMIN;
+    const tooltipData = getCountryTooltip(countryName);
+    
+    if (isLoading) {
+      return `
+        <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg max-w-xs border border-gray-600 scene-tooltip">
+          <div class="animate-pulse">
+            <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-gray-700 rounded w-full mb-1"></div>
+            <div class="h-3 bg-gray-700 rounded w-5/6"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Loading current events...</p>
+        </div>
+      `;
+    }
+    
+    if (tooltipData) {
+      const lastUpdated = tooltipData.lastUpdated ? 
+        new Date(tooltipData.lastUpdated).toLocaleDateString() : '';
+      
+      return `
+        <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg max-w-sm border border-gray-600 scene-tooltip">
+          <div class="mb-2">
+            <h3 class="text-lg font-bold text-blue-400">${tooltipData.country}</h3>
+            ${lastUpdated ? `<p class="text-xs text-gray-400">Updated: ${lastUpdated}</p>` : ''}
+          </div>
+          <div class="mb-3">
+            <p class="text-sm leading-relaxed">${tooltipData.paragraph}</p>
+          </div>
+          ${tooltipData.sources && tooltipData.sources.length > 0 ? `
+            <div>
+              <p class="text-xs text-gray-400 mb-1">Sources:</p>
+              <div class="flex flex-wrap gap-1">
+                ${tooltipData.sources.map(source => 
+                  `<span class="text-xs bg-gray-700 px-2 py-1 rounded">${source}</span>`
+                ).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    return `
+      <div class="bg-gray-800 text-white p-4 rounded-lg shadow-lg max-w-sm border border-gray-600 scene-tooltip">
+        <h3 class="text-lg font-bold text-blue-400 mb-2">🌍 ${countryName}</h3>
+        <p class="text-sm text-gray-300 mb-2">
+          Hover or click to analyze current developments and relationships with other countries.
+        </p>
+        <div class="text-xs text-gray-400 border-t border-gray-600 pt-2">
+          <p>💡 Enter two countries above to get AI-powered analysis of their relationship and recent developments.</p>
+        </div>
+      </div>
+    `;
+  };
+
+  // Function to render arc tooltips
+  const renderArcTooltip = () => {
+    const relationshipTooltip = getRelationshipTooltip();
+    
+    if (isLoading) {
+      return `
+        <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg max-w-xs border border-gray-600 scene-tooltip">
+          <div class="animate-pulse">
+            <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-gray-700 rounded w-full mb-1"></div>
+            <div class="h-3 bg-gray-700 rounded w-5/6"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Loading current events...</p>
+        </div>
+      `;
+    }
+    
+    if (relationshipTooltip) {
+      const lastUpdated = relationshipTooltip.lastUpdated ? 
+        new Date(relationshipTooltip.lastUpdated).toLocaleDateString() : '';
+      
+      return `
+        <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg max-w-md border border-gray-600 scene-tooltip">
+          <div class="mb-2">
+            <h3 class="text-lg font-bold text-purple-400">
+              ${relationshipTooltip.country1} ↔ ${relationshipTooltip.country2}
+            </h3>
+            <p class="text-sm text-yellow-400 capitalize font-medium">
+              Relationship: ${relationshipTooltip.relationship}
+            </p>
+            ${lastUpdated ? `<p class="text-xs text-gray-400">Updated: ${lastUpdated}</p>` : ''}
+          </div>
+          <div class="mb-3">
+            <p class="text-sm leading-relaxed">${relationshipTooltip.paragraph}</p>
+          </div>
+          ${relationshipTooltip.sources && relationshipTooltip.sources.length > 0 ? `
+            <div>
+              <p class="text-xs text-gray-400 mb-1">Sources:</p>
+              <div class="flex flex-wrap gap-1">
+                ${relationshipTooltip.sources.map(source => 
+                  `<span class="text-xs bg-gray-700 px-2 py-1 rounded">${source}</span>`
+                ).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    return `
+      <div class="bg-gray-800 text-white p-4 rounded-lg shadow-lg max-w-md border border-gray-600 scene-tooltip">
+        <h3 class="text-lg font-bold text-purple-400 mb-2">🔗 ${country1} ↔ ${country2}</h3>
+        <p class="text-sm text-gray-300 mb-2">
+          Connection between these two countries. Click to load current relationship analysis.
+        </p>
+        <div class="text-xs text-gray-400 border-t border-gray-600 pt-2">
+          <p>📊 AI will analyze recent developments, diplomatic relations, trade, and conflicts between these countries.</p>
+        </div>
+      </div>
+    `;
+  };
 
   useEffect(() => {
     if (globeEl.current && country1Coords && country2Coords) {
@@ -152,15 +289,27 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     endLng: country2Coords.lng,
     color: lineColor,
     stroke: 2,
+    tooltip: renderArcTooltip(),
   }] : [];
 
+  // Create enhanced labels with buffer zones for easier hovering
   const labelsData = [country1Coords, country2Coords].filter(Boolean).map(coords => ({
     lat: coords.lat,
     lng: coords.lng,
     text: coords.name,
-    size: 1.5,
-    color: 'white',
+    size: 2.2,
+    color: 'rgba(255, 255, 255, 0.95)',
+    tooltip: renderCountryTooltip({ properties: { ADMIN: coords.name } }),
+    buffer: 5, // Larger buffer zone for easier hovering
+    name: coords.name, // Store name for click handling
   }));
+
+  // Handle label clicks to show detailed tooltip
+  const handleLabelClick = (label: any) => {
+    if (country1 && country2) {
+      fetchTooltipData(country1, country2);
+    }
+  };
 
   return (
     <Globe
@@ -172,17 +321,21 @@ export default function GlobeComponent({ country1, country2, countries, countryC
       arcsData={arcsData}
       arcColor={'color'}
       arcStroke={'stroke'}
+      arcLabel={'tooltip'}
       polygonsData={countries.features}
       polygonCapColor={() => 'rgba(0, 0, 0, 0)'}
       polygonSideColor={() => 'rgba(0, 0, 0, 0)'}
-      polygonLabel={({ properties }: any) => `<b>${properties.ADMIN}</b>`}
+      polygonLabel={renderCountryTooltip}
       labelsData={labelsData}
       labelLat={d => d.lat}
       labelLng={d => d.lng}
       labelText={d => d.text}
       labelSize={d => d.size}
       labelColor={d => d.color}
+      labelLabel={d => d.tooltip}
+      labelResolution={4}
       labelTransitionDuration={500}
+      onLabelClick={handleLabelClick}
       onZoom={handleZoom}
     />
   );

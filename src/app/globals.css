@@ -84,3 +84,38 @@ body {
 .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
+
+/* Globe tooltip styles */
+.globe-tooltip {
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  max-width: 400px !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+}
+
+/* Ensure tooltip content renders properly */
+.globe-tooltip * {
+  box-sizing: border-box !important;
+}
+
+/* Custom hover effects for globe interactions */
+.scene-tooltip {
+  background: rgba(17, 24, 39, 0.95) !important;
+  border: 1px solid #374151 !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Enhanced country label styling */
+.globe-label {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.globe-label:hover {
+  transform: scale(1.1) !important;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9) !important;
+}

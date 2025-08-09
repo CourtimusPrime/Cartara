@@ -36,10 +36,26 @@ export const sampleRelationshipData: Record<string, RelationshipTooltipData> = {
     lastUpdated: '2024-01-15T00:00:00Z',
     sources: ['UN News', 'Reuters', 'BBC News']
   },
+  'russia-ukraine': {
+    country1: 'Russia',
+    country2: 'Ukraine',
+    relationship: 'conflict',
+    paragraph: 'The relationship between Ukraine and Russia remains complex and tense, with ongoing diplomatic efforts by the international community to seek peaceful resolutions. Both countries have historical and cultural ties, but current circumstances have strained relations significantly. International observers continue to monitor the situation closely.',
+    lastUpdated: '2024-01-15T00:00:00Z',
+    sources: ['UN News', 'Reuters', 'BBC News']
+  },
   'china-united states': {
     country1: 'China',
     country2: 'United States',
-    relationship: 'strategic competition',
+    relationship: 'trade competition',
+    paragraph: 'US-China relations involve a complex mix of cooperation and competition across economic, technological, and diplomatic spheres. Both nations maintain significant trade relationships while navigating strategic differences. Recent diplomatic engagements have focused on climate cooperation, trade discussions, and regional security concerns.',
+    lastUpdated: '2024-01-15T00:00:00Z',
+    sources: ['Reuters', 'Financial Times', 'Associated Press']
+  },
+  'united states-china': {
+    country1: 'United States',
+    country2: 'China',
+    relationship: 'trade competition',
     paragraph: 'US-China relations involve a complex mix of cooperation and competition across economic, technological, and diplomatic spheres. Both nations maintain significant trade relationships while navigating strategic differences. Recent diplomatic engagements have focused on climate cooperation, trade discussions, and regional security concerns.',
     lastUpdated: '2024-01-15T00:00:00Z',
     sources: ['Reuters', 'Financial Times', 'Associated Press']

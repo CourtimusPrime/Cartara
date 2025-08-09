@@ -54,8 +54,10 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
     e.preventDefault();
     if (!prompt.trim() || isLoading) return;
 
-    setIsLoading(true);
+    // Clear any previous results to prevent contamination
+    setResponse('');
     setError('');
+    setIsLoading(true);
     setIsTyping(false);
 
     try {

@@ -102,8 +102,8 @@ class NewsAnalysisRequest(BaseModel):
 
 class NewsAnalysisResponse(BaseModel):
     success: bool
-    data: Dict = None
-    error: Dict = None
+    data: Dict | None = None
+    error: Dict | None = None
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):

@@ -55,19 +55,26 @@ export default function Home() {
 
   // Handle countries detected from prompt analysis
   const handleCountriesDetected = (detectedCountry1: string, detectedCountry2: string, relationship: string) => {
-    // Update countries in input fields (for debugging/dev purposes)
-    setCountry1(detectedCountry1);
-    setCountry2(detectedCountry2);
+    // Clear any previous state to prevent contamination
+    setCountry1('');
+    setCountry2('');
+    setIsAIPopulated(false);
     
-    // Set line color based on relationship
-    const relationshipColor = getRelationshipColor(relationship);
-    setLineColor(relationshipColor);
-    
-    // Mark as AI populated and clear after 3 seconds
-    setIsAIPopulated(true);
-    setTimeout(() => setIsAIPopulated(false), 3000);
-    
-    console.log(`🤖 AI detected: ${detectedCountry1} ↔ ${detectedCountry2} (${relationship}) - Color: ${relationshipColor}`);
+    // Update with new countries after clearing
+    setTimeout(() => {
+      setCountry1(detectedCountry1);
+      setCountry2(detectedCountry2);
+      
+      // Set line color based on relationship
+      const relationshipColor = getRelationshipColor(relationship);
+      setLineColor(relationshipColor);
+      
+      // Mark as AI populated and clear after 3 seconds
+      setIsAIPopulated(true);
+      setTimeout(() => setIsAIPopulated(false), 3000);
+      
+      console.log(`🤖 AI detected: ${detectedCountry1} ↔ ${detectedCountry2} (${relationship}) - Color: ${relationshipColor}`);
+    }, 100);
   };
 
   // Handle manual input changes

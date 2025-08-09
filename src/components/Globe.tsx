@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'react-globe.gl';
 import { useDebouncedCallback } from 'use-debounce';
+import * as THREE from 'three';
 
 interface Country {
   properties: {
@@ -45,6 +46,37 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     window.addEventListener('resize', debouncedResize);
     return () => window.removeEventListener('resize', debouncedResize);
   }, [debouncedResize]);
+
+  useEffect(() => {
+    // Add stars
+    const globe = globeEl.current;
+    if (!globe) return;
+
+    // @ts-ignore
+    const scene = globe.scene();
+    const starQty = 10000;
+    const starGeometry = new THREE.BufferGeometry();
+    const starVertices = [];
+    const radius = 1000;
+    for (let i = 0; i < starQty; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = 2 * Math.PI * u;
+      const phi = Math.acos(2 * v - 1);
+      const x = radius * Math.sin(phi) * Math.cos(theta);
+      const y = radius * Math.sin(phi) * Math.sin(theta);
+      const z = radius * Math.cos(phi);
+      starVertices.push(x, y, z);
+    }
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.5,
+      transparent: true,
+    });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+  }, []);
 
   const getCountryCoords = (countryName: string) => {
     const country = countryCoords.find(c => c.name.toLowerCase() === countryName.toLowerCase());

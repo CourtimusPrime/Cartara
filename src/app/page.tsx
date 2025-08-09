@@ -6,10 +6,19 @@ import Globe from '@/components/Globe';
 export default function Home() {
   const [country1, setCountry1] = useState('');
   const [country2, setCountry2] = useState('');
-  const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState({ features: [] });
+  const [countryCoords, setCountryCoords] = useState([]);
+  const [lineColor, setLineColor] = useState('rgba(255, 0, 0, 0.8)');
 
   useEffect(() => {
-    // Fetch country data
+    // Fetch country polygons
+    fetch('https://datahub.io/core/geo-countries/r/countries.geojson')
+      .then(res => res.json())
+      .then(data => {
+        setCountries(data);
+      });
+
+    // Fetch country coordinates
     fetch('https://raw.githubusercontent.com/mledoze/countries/master/countries.json')
       .then(res => res.json())
       .then(data => {
@@ -18,9 +27,16 @@ export default function Home() {
           lat: country.latlng[0],
           lng: country.latlng[1],
         }));
-        setCountries(countryData);
+        setCountryCoords(countryData);
       });
   }, []);
+
+  const colors = [
+    { name: 'Red', value: 'rgba(255, 0, 0, 0.8)' },
+    { name: 'Green', value: 'rgba(0, 255, 0, 0.8)' },
+    { name: 'Blue', value: 'rgba(0, 0, 255, 0.8)' },
+    { name: 'White', value: 'rgba(255, 255, 255, 0.8)' },
+  ];
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
@@ -40,9 +56,26 @@ export default function Home() {
           onChange={(e) => setCountry2(e.target.value)}
           className="p-2 border border-gray-300 rounded-md"
         />
+        <select
+          value={lineColor}
+          onChange={(e) => setLineColor(e.target.value)}
+          className="p-2 border border-gray-300 rounded-md"
+        >
+          {colors.map(color => (
+            <option key={color.name} value={color.value}>
+              {color.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="w-full h-[600px]">
-        <Globe country1={country1} country2={country2} countries={countries} />
+        <Globe
+          country1={country1}
+          country2={country2}
+          countries={countries}
+          countryCoords={countryCoords}
+          lineColor={lineColor}
+        />
       </div>
     </main>
   );

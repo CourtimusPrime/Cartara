@@ -5,22 +5,32 @@ import { useEffect, useRef } from 'react';
 import Globe from 'react-globe.gl';
 
 interface Country {
-  name: string;
-  lat: number;
-  lng: number;
+  properties: {
+    ADMIN: string;
+  };
+}
+
+interface CountryCoord {
+    name: string;
+    lat: number;
+    lng: number;
 }
 
 interface GlobeProps {
   country1: string;
   country2: string;
-  countries: Country[];
+  countries: {
+    features: Country[];
+  };
+  countryCoords: CountryCoord[];
+  lineColor: string;
 }
 
-export default function GlobeComponent({ country1, country2, countries }: GlobeProps) {
+export default function GlobeComponent({ country1, country2, countries, countryCoords, lineColor }: GlobeProps) {
   const globeEl = useRef();
 
   const getCountryCoords = (countryName: string) => {
-    const country = countries.find(c => c.name.toLowerCase() === countryName.toLowerCase());
+    const country = countryCoords.find(c => c.name.toLowerCase() === countryName.toLowerCase());
     return country ? { lat: country.lat, lng: country.lng } : null;
   };
 
@@ -32,13 +42,13 @@ export default function GlobeComponent({ country1, country2, countries }: GlobeP
     startLng: country1Coords.lng,
     endLat: country2Coords.lat,
     endLng: country2Coords.lng,
-    color: 'rgba(255, 0, 0, 0.8)',
+    color: lineColor,
     stroke: 2,
   }] : [];
 
   const highlightedCountries = [country1, country2].filter(Boolean).map(name => {
-    const country = countries.find(c => c.name.toLowerCase() === name.toLowerCase());
-    return country ? country.name : null;
+    const country = countries.features.find(c => c.properties.ADMIN.toLowerCase() === name.toLowerCase());
+    return country ? country.properties.ADMIN : null;
   }).filter(Boolean);
 
 
@@ -57,10 +67,10 @@ export default function GlobeComponent({ country1, country2, countries }: GlobeP
       arcsData={arcsData}
       arcColor={'color'}
       arcStroke={'stroke'}
-      polygonsData={countries}
-      polygonCapColor={({ properties }: any) => highlightedCountries.includes(properties.name) ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)'}
+      polygonsData={countries.features}
+      polygonCapColor={({ properties }: any) => highlightedCountries.includes(properties.ADMIN) ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)'}
       polygonSideColor={() => 'rgba(0, 0, 0, 0)'}
-      polygonLabel={({ properties }: any) => `<b>${properties.name}</b>`}
+      polygonLabel={({ properties }: any) => `<b>${properties.ADMIN}</b>`}
       polygonsTransitionDuration={300}
     />
   );

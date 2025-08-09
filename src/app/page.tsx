@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -41,7 +40,7 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen">
-      <div className="absolute top-0 left-0 w-full h-full z-0">
+      <div className="absolute top-0 left-0 w-full h-full z-0" onDragStart={(e) => e.preventDefault()}>
         <Globe
           country1={country1}
           country2={country2}

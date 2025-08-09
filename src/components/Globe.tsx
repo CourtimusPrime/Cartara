@@ -1,8 +1,8 @@
-
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Globe from 'react-globe.gl';
+import { useDebouncedCallback } from 'use-debounce';
 
 interface Country {
   properties: {
@@ -28,6 +28,22 @@ interface GlobeProps {
 
 export default function GlobeComponent({ country1, country2, countries, countryCoords, lineColor }: GlobeProps) {
   const globeEl = useRef();
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  const debouncedResize = useDebouncedCallback(() => {
+    if (typeof window !== 'undefined') {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+  }, 200);
+
+  useEffect(() => {
+    debouncedResize();
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, [debouncedResize]);
 
   const getCountryCoords = (countryName: string) => {
     const country = countryCoords.find(c => c.name.toLowerCase() === countryName.toLowerCase());
@@ -51,7 +67,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     lng: coords.lng,
     text: coords.name,
     size: 1.5,
-    color: 'white',
+    color: 'yellow',
   }));
 
 
@@ -66,6 +82,8 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     <Globe
       // @ts-ignore
       ref={globeEl}
+      width={size.width}
+      height={size.height}
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
       arcsData={arcsData}
       arcColor={'color'}

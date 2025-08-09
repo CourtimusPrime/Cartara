@@ -14,7 +14,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-globe.gl": "^2.35.0",
-    "three": "^0.179.1"
+    "three": "^0.179.1",
+    "use-debounce": "^10.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

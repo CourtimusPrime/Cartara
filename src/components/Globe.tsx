@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -53,6 +54,46 @@ export default function GlobeComponent({ country1, country2, countries, countryC
   const country1Coords = getCountryCoords(country1);
   const country2Coords = getCountryCoords(country2);
 
+  useEffect(() => {
+    if (globeEl.current && country1Coords && country2Coords) {
+      // Calculate midpoint
+      const lat1 = country1Coords.lat * Math.PI / 180;
+      const lon1 = country1Coords.lng * Math.PI / 180;
+      const lat2 = country2Coords.lat * Math.PI / 180;
+      const lon2 = country2Coords.lng * Math.PI / 180;
+
+      const Bx = Math.cos(lat2) * Math.cos(lon2 - lon1);
+      const By = Math.cos(lat2) * Math.sin(lon2 - lon1);
+      const lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+      const lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+      const centerLat = lat3 * 180 / Math.PI;
+      const centerLng = lon3 * 180 / Math.PI;
+
+      // Calculate distance for zoom
+      const R = 6371; // Radius of Earth in km
+      const dLat = lat2 - lat1;
+      const dLon = lon2 - lon1;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+
+      const altitude = 2.5 - (distance / 20000); // Simple formula to adjust altitude based on distance
+
+      // @ts-ignore
+      globeEl.current.pointOfView({
+        lat: centerLat,
+        lng: centerLng,
+        altitude: altitude < 0.1 ? 0.1 : altitude, // a minimum altitude
+      }, 2000); // 2 second transition
+    } else if (globeEl.current) {
+        // @ts-ignore
+        globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2 }, 2000);
+    }
+  }, [country1, country2, country1Coords, country2Coords]);
+
   const arcsData = country1Coords && country2Coords ? [{
     startLat: country1Coords.lat,
     startLng: country1Coords.lng,
@@ -69,14 +110,6 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     size: 1.5,
     color: 'yellow',
   }));
-
-
-  useEffect(() => {
-    if (globeEl.current) {
-      // @ts-ignore
-      globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2 });
-    }
-  }, []);
 
   return (
     <Globe

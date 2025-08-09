@@ -33,14 +33,16 @@ async def websocket_endpoint(websocket: WebSocket):
                 prompt = message_data.get("prompt", data)
                 
                 stream = await client.chat.completions.create(
-                    model="gpt-5-nano",
-                    messages=[{"role": "user", "content": prompt}],
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "system", "content": "You are an expert of geopolitics and current events."},
+                              {"role": "user", "content": prompt}],
                     stream=True,
                 )
                 
                 async for chunk in stream:
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
+                        print(f"Streaming chunk: '{content}'")  # Debug log
                         await websocket.send_text(content)
                         await asyncio.sleep(0.01)
                 
@@ -58,6 +60,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 async for chunk in stream:
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
+                        print(f"Streaming chunk: '{content}'")  # Debug log
                         await websocket.send_text(content)
                         await asyncio.sleep(0.01)
                 

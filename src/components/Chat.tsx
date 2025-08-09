@@ -50,7 +50,8 @@ export default function Chat() {
     };
 
     ws.current.onmessage = (event) => {
-      const data = event.data.trim();
+      const data = event.data; // Don't trim! Spaces are important
+      console.log('Received chunk:', JSON.stringify(data)); // Debug log
       if (data === '[DONE]') {
         // End of stream
         if (currentResponse) {
@@ -137,10 +138,10 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black via-gray-900 to-transparent backdrop-blur-sm">
+    <div className="fixed bottom-0 left-0 w-full h-2/3">
       <div className="max-w-4xl mx-auto h-full flex flex-col p-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 bg-gray-800/80 rounded-t-lg px-4 py-2 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4 bg-gray-800/80 rounded-t-lg px-4 py-2 backdrop-blur-3xl">
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full ${
               isConnected ? 'bg-green-500' : 'bg-red-500'

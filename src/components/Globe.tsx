@@ -126,6 +126,20 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     }
   }, [country1, country2, country1Coords, country2Coords]);
 
+  const handleZoom = (pov) => {
+    const { altitude } = pov;
+    const minAltitude = 0.8; // Decreased from 0.1
+    const maxAltitude = 4;
+
+    if (altitude < minAltitude) {
+        // @ts-ignore
+      globeEl.current.pointOfView({ ...pov, altitude: minAltitude });
+    } else if (altitude > maxAltitude) {
+        // @ts-ignore
+      globeEl.current.pointOfView({ ...pov, altitude: maxAltitude });
+    }
+  };
+
   const arcsData = country1Coords && country2Coords ? [{
     startLat: country1Coords.lat,
     startLng: country1Coords.lng,
@@ -164,6 +178,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
       labelSize={d => d.size}
       labelColor={d => d.color}
       labelTransitionDuration={500}
+      onZoom={handleZoom}
     />
   );
 }

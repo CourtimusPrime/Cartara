@@ -31,7 +31,7 @@ export default function GlobeComponent({ country1, country2, countries, countryC
 
   const getCountryCoords = (countryName: string) => {
     const country = countryCoords.find(c => c.name.toLowerCase() === countryName.toLowerCase());
-    return country ? { lat: country.lat, lng: country.lng } : null;
+    return country ? { lat: country.lat, lng: country.lng, name: country.name } : null;
   };
 
   const country1Coords = getCountryCoords(country1);
@@ -46,10 +46,13 @@ export default function GlobeComponent({ country1, country2, countries, countryC
     stroke: 2,
   }] : [];
 
-  const highlightedCountries = [country1, country2].filter(Boolean).map(name => {
-    const country = countries.features.find(c => c.properties.ADMIN.toLowerCase() === name.toLowerCase());
-    return country ? country.properties.ADMIN : null;
-  }).filter(Boolean);
+  const labelsData = [country1Coords, country2Coords].filter(Boolean).map(coords => ({
+    lat: coords.lat,
+    lng: coords.lng,
+    text: coords.name,
+    size: 1.5,
+    color: 'white',
+  }));
 
 
   useEffect(() => {
@@ -68,10 +71,16 @@ export default function GlobeComponent({ country1, country2, countries, countryC
       arcColor={'color'}
       arcStroke={'stroke'}
       polygonsData={countries.features}
-      polygonCapColor={({ properties }: any) => highlightedCountries.includes(properties.ADMIN) ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)'}
+      polygonCapColor={() => 'rgba(0, 0, 0, 0)'}
       polygonSideColor={() => 'rgba(0, 0, 0, 0)'}
       polygonLabel={({ properties }: any) => `<b>${properties.ADMIN}</b>`}
-      polygonsTransitionDuration={300}
+      labelsData={labelsData}
+      labelLat={d => d.lat}
+      labelLng={d => d.lng}
+      labelText={d => d.text}
+      labelSize={d => d.size}
+      labelColor={d => d.color}
+      labelTransitionDuration={500}
     />
   );
 }

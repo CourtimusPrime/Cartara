@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -39,36 +40,8 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-8">Country Visualizer</h1>
-      <div className="flex gap-4 mb-8">
-        <input
-          type="text"
-          placeholder="Enter country 1"
-          value={country1}
-          onChange={(e) => setCountry1(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md"
-        />
-        <input
-          type="text"
-          placeholder="Enter country 2"
-          value={country2}
-          onChange={(e) => setCountry2(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md"
-        />
-        <select
-          value={lineColor}
-          onChange={(e) => setLineColor(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md"
-        >
-          {colors.map(color => (
-            <option key={color.name} value={color.value}>
-              {color.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="w-full h-[600px]">
+    <main className="relative min-h-screen">
+      <div className="absolute top-0 left-0 w-full h-full z-0">
         <Globe
           country1={country1}
           country2={country2}
@@ -76,6 +49,36 @@ export default function Home() {
           countryCoords={countryCoords}
           lineColor={lineColor}
         />
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center p-8">
+        <h1 className="text-4xl font-bold mb-8 text-white">Country Visualizer</h1>
+        <div className="flex gap-4 mb-8">
+          <input
+            type="text"
+            placeholder="Enter country 1"
+            value={country1}
+            onChange={(e) => setCountry1(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md bg-gray-800 text-white"
+          />
+          <input
+            type="text"
+            placeholder="Enter country 2"
+            value={country2}
+            onChange={(e) => setCountry2(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md bg-gray-800 text-white"
+          />
+          <select
+            value={lineColor}
+            onChange={(e) => setLineColor(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md bg-gray-800 text-white"
+          >
+            {colors.map(color => (
+              <option key={color.name} value={color.value}>
+                {color.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </main>
   );

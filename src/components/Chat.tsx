@@ -9,7 +9,12 @@ interface Message {
   id: string;
 }
 
-export default function Chat() {
+interface ChatProps {
+  isOpen: boolean;
+  onToggle: (open: boolean) => void;
+}
+
+export default function Chat({ isOpen, onToggle }: ChatProps) {
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -20,13 +25,20 @@ export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    connectWebSocket();
+    if (isOpen && !ws.current) {
+      connectWebSocket();
+    } else if (!isOpen && ws.current) {
+      ws.current.close();
+      ws.current = null;
+      setIsConnected(false);
+    }
     return () => {
       if (ws.current) {
         ws.current.close();
+        ws.current = null;
       }
     };
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     scrollToBottom();
@@ -51,7 +63,6 @@ export default function Chat() {
 
     ws.current.onmessage = (event) => {
       const data = event.data; // Don't trim! Spaces are important
-      console.log('Received chunk:', JSON.stringify(data)); // Debug log
       if (data === '[DONE]') {
         // End of stream
         if (currentResponse) {
@@ -138,10 +149,12 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full h-2/3">
-      <div className="max-w-4xl mx-auto h-full flex flex-col p-4">
+    <div className={`fixed top-0 right-0 h-full w-96 bg-gray-900/95 backdrop-blur-sm shadow-2xl transform transition-transform duration-300 z-40 ${
+      isOpen ? 'translate-x-0' : 'translate-x-full'
+    }`}>
+      <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 bg-gray-800/80 rounded-t-lg px-4 py-2 backdrop-blur-3xl">
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full ${
               isConnected ? 'bg-green-500' : 'bg-red-500'
@@ -151,6 +164,19 @@ export default function Chat() {
               {isConnected ? 'Connected' : 'Disconnected'}
             </span>
           </div>
+          <button
+            onClick={() => onToggle(false)}
+            className="p-1 text-gray-400 hover:text-white transition-colors"
+            aria-label="Close chat"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Action Bar */}
+        <div className="flex justify-between items-center px-4 py-2 border-b border-gray-700">
           <div className="flex space-x-2">
             {!isConnected && (
               <button
@@ -170,7 +196,7 @@ export default function Chat() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 bg-gray-800/80 rounded-none px-4 py-2 overflow-y-auto backdrop-blur-sm scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+        <div className="flex-1 px-4 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-gray-400">
               <div className="text-center">
@@ -233,15 +259,15 @@ export default function Chat() {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="bg-gray-800/80 rounded-b-lg p-4 backdrop-blur-sm">
-          <div className="flex space-x-2">
+        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-700">
+          <div className="flex flex-col space-y-2">
             <textarea
               ref={textareaRef}
               value={prompt}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder={isConnected ? "Type your message here... (Enter to send, Shift+Enter for new line)" : "Disconnected - please reconnect"}
-              className="flex-1 p-3 bg-gray-700 text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full p-3 bg-gray-800 text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 border border-gray-600"
               style={{ minHeight: '44px', maxHeight: '120px' }}
               disabled={!isConnected}
               rows={1}
@@ -249,12 +275,15 @@ export default function Chat() {
             <button
               type="submit"
               disabled={!prompt.trim() || !isConnected || isTyping}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
             >
               {isTyping ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Thinking...
+                </div>
               ) : (
-                'Send'
+                'Send Message'
               )}
             </button>
           </div>

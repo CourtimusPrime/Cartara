@@ -42,7 +42,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 async for chunk in stream:
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
-                        print(f"Streaming chunk: '{content}'")  # Debug log
                         await websocket.send_text(content)
                         await asyncio.sleep(0.01)
                 
@@ -60,7 +59,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 async for chunk in stream:
                     if chunk.choices[0].delta.content is not None:
                         content = chunk.choices[0].delta.content
-                        print(f"Streaming chunk: '{content}'")  # Debug log
                         await websocket.send_text(content)
                         await asyncio.sleep(0.01)
                 

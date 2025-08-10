@@ -103,4 +103,28 @@ Please provide a concise but comprehensive summary:"""
             max_tokens=800,
         )
 
-        return response.choices[0].message.content.strip()
+        response_text = response.choices[0].message.content.strip()
+        
+        # Normalize United States references
+        normalized_text = self._normalize_country_names(response_text)
+        print(f"📄 [Summarizer] Text normalized for country names")
+        
+        return normalized_text
+
+    def _normalize_country_names(self, text: str) -> str:
+        """Normalize country name references"""
+        import re
+        
+        # Normalize country name references
+        patterns = [
+            (r'\b(USA|US|the US|U\.S\.A\.|U\.S\.)\b', 'United States'),
+            (r'\bthe United States\b', 'United States'),  # Remove redundant "the"
+            (r'\b(UK|England|Scotland|Wales|Britain|Great Britain)\b', 'United Kingdom'),
+            (r'\b(Turkey|Türkiye)\b', 'Türkiye'),  # Use official name with diacritic
+        ]
+        
+        normalized = text
+        for pattern, replacement in patterns:
+            normalized = re.sub(pattern, replacement, normalized, flags=re.IGNORECASE)
+        
+        return normalized

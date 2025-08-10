@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 from .base_agent import AgentInput
 from .divider_agent import DividerAgent
+from .editor_agent import EditorAgent
 from .keyword_extractor_agent import KeywordExtractorAgent
 from .relevance_filter_agent import RelevanceFilterAgent
 from .researcher_agent import ResearcherAgent
@@ -19,6 +20,7 @@ class AgentChainOrchestrator:
         self.researcher_agent = ResearcherAgent()
         self.relevance_filter_agent = RelevanceFilterAgent()
         self.summarizer_agent = SummarizerAgent()
+        self.editor_agent = EditorAgent()
         self.keyword_extractor_agent = KeywordExtractorAgent()
         self.divider_agent = DividerAgent()
 
@@ -122,39 +124,59 @@ class AgentChainOrchestrator:
             print(f"✅ [Chain] STEP 4 SUCCESS: Created summary ({len(summary)} chars)")
             self.logger.info("Successfully created summary")
 
-            # Step 5: Extract countries and relationship
-            print(f"🔍 [Chain] STEP 5: Extracting countries and relationship")
-            self.logger.info("Step 5: Extracting countries and relationship")
-            extractor_input = AgentInput(data=summary, metadata=summarizer_output.metadata)
+            # Step 5: Edit and clean the summary
+            print(f"✏️  [Chain] STEP 5: Editing and cleaning summary")
+            self.logger.info("Step 5: Editing and cleaning summary")
+            editor_input = AgentInput(
+                data={"summary": summary, "articles": relevant_articles, "original_question": user_question},
+                metadata=summarizer_output.metadata
+            )
+            editor_output = await self.editor_agent.process(editor_input)
+
+            if not editor_output.success:
+                print(f"❌ [Chain] STEP 5 FAILED: {editor_output.error_message}")
+                return self._create_error_response(
+                    "Failed to edit summary", editor_output.error_message
+                )
+
+            edited_data = editor_output.data
+            edited_summary = edited_data.get("edited_summary", summary)  # Fallback to original summary
+            article_citations = edited_data.get("article_citations", [])
+            print(f"✅ [Chain] STEP 5 SUCCESS: Edited summary ({len(edited_summary)} chars), {len(article_citations)} citations")
+
+            # Step 6: Extract countries and relationship
+            print(f"🔍 [Chain] STEP 6: Extracting countries and relationship")
+            self.logger.info("Step 6: Extracting countries and relationship")
+            extractor_input = AgentInput(data=edited_summary, metadata=editor_output.metadata)
             extractor_output = await self.keyword_extractor_agent.process(extractor_input)
 
             if not extractor_output.success:
-                print(f"❌ [Chain] STEP 5 FAILED: {extractor_output.error_message}")
+                print(f"❌ [Chain] STEP 6 FAILED: {extractor_output.error_message}")
                 return self._create_error_response(
                     "Failed to extract countries", extractor_output.error_message
                 )
 
             countries_data = extractor_output.data
-            print(f"✅ [Chain] STEP 5 SUCCESS: Extracted countries: {countries_data}")
+            print(f"✅ [Chain] STEP 6 SUCCESS: Extracted countries: {countries_data}")
             self.logger.info(f"Extracted countries: {countries_data}")
 
-            # Step 6: Create structured paragraphs
-            print(f"📝 [Chain] STEP 6: Creating structured paragraphs")
-            self.logger.info("Step 6: Creating structured paragraphs")
+            # Step 7: Create structured paragraphs
+            print(f"📝 [Chain] STEP 7: Creating structured paragraphs")
+            self.logger.info("Step 7: Creating structured paragraphs")
             divider_input = AgentInput(
-                data={"summary": summary, "countries": countries_data},
+                data={"summary": edited_summary, "countries": countries_data},
                 metadata=extractor_output.metadata,
             )
             divider_output = await self.divider_agent.process(divider_input)
 
             if not divider_output.success:
-                print(f"❌ [Chain] STEP 6 FAILED: {divider_output.error_message}")
+                print(f"❌ [Chain] STEP 7 FAILED: {divider_output.error_message}")
                 return self._create_error_response(
                     "Failed to create structured output", divider_output.error_message
                 )
 
             paragraphs = divider_output.data
-            print(f"✅ [Chain] STEP 6 SUCCESS: Created paragraphs")
+            print(f"✅ [Chain] STEP 7 SUCCESS: Created paragraphs")
 
             # Create final structured response
             result = {
@@ -166,7 +188,8 @@ class AgentChainOrchestrator:
                     "country_1_paragraph": paragraphs.get("country_1_paragraph", ""),
                     "country_2_paragraph": paragraphs.get("country_2_paragraph", ""),
                     "relationship_paragraph": paragraphs.get("relationship_paragraph", ""),
-                    "summary": summary,
+                    "summary": edited_summary,
+                    "article_citations": article_citations,
                 },
                 "metadata": {
                     "original_question": user_question,
@@ -174,7 +197,8 @@ class AgentChainOrchestrator:
                     "articles_found": len(articles),
                     "articles_filtered": len(relevant_articles),
                     "sources": [article.get("source", "Unknown") for article in relevant_articles],
-                    "processing_steps_completed": 6,
+                    "processing_steps_completed": 7,
+                    "editing_notes": edited_data.get("editing_notes", ""),
                 },
             }
 

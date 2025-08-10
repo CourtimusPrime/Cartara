@@ -90,7 +90,11 @@ class ResearcherAgent(BaseAgent):
             required_parts = [f'"{kw}"' if ' ' in kw else kw for kw in country_keywords]
             optional_parts = other_keywords[:2]  # Limit to 2 most relevant other keywords
             
-            if optional_parts:
+            # For single country queries, be more flexible - don't require additional terms
+            if len(country_keywords) == 1 and len(keywords) <= 4:
+                # Use just the country name for broader results
+                query = ' AND '.join(required_parts)
+            elif optional_parts:
                 query = f"({' AND '.join(required_parts)}) AND ({' OR '.join(optional_parts)})"
             else:
                 query = ' AND '.join(required_parts)
@@ -102,8 +106,8 @@ class ResearcherAgent(BaseAgent):
         print(f"🎯 [Researcher] Constructed query: {query}")
         domains = ",".join(REPUTABLE_SOURCES)
 
-        # Search for articles from two days ago to yesterday
-        from_date = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+        # Search for articles from five days ago to yesterday
+        from_date = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
         to_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
         params = {
@@ -112,7 +116,7 @@ class ResearcherAgent(BaseAgent):
             "from": from_date,
             "to": to_date,
             "sortBy": "relevancy",
-            "pageSize": 3,
+            "pageSize": 10,
             "apiKey": NEWSAPI_API_KEY,
             "language": "en",
         }

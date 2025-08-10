@@ -122,56 +122,6 @@ export default function Home() {
         />
       </div>
 
-      {/* Top Controls */}
-      <div className="absolute top-4 left-4 right-4 z-40">
-        <div className="flex gap-4 max-w-4xl mx-auto top-controls p-4">
-          {/* AI Detection Indicator */}
-          {isAIPopulated && (
-            <div className="absolute -top-2 left-4 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-              🤖 AI Detected
-            </div>
-          )}
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="🌍 Country 1"
-              value={country1}
-              onChange={e => handleManualCountry1Change(e.target.value)}
-              className={`px-3 py-2 enhanced-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
-              }`}
-            />
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="🌍 Country 2"
-              value={country2}
-              onChange={e => handleManualCountry2Change(e.target.value)}
-              className={`px-3 py-2 enhanced-input rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
-              }`}
-            />
-          </div>
-
-          <select
-            value={lineColor}
-            onChange={e => setLineColor(e.target.value)}
-            className={`px-3 py-2 enhanced-input rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              isAIPopulated ? 'ring-2 ring-green-400 bg-green-900/20' : ''
-            }`}
-            title="Connection color represents relationship type"
-          >
-            {colors.map(color => (
-              <option key={color.name} value={color.value} className="bg-gray-800">
-                {color.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       {/* Prompt Interface */}
       <PromptInterface onCountriesDetected={handleCountriesDetected} />

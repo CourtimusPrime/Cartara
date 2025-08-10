@@ -77,18 +77,21 @@ class RelevanceFilterAgent(BaseAgent):
         
         print(f"🤖 [RelevanceFilter] Sending {len(article_summaries)} articles to OpenAI for relevance analysis...")
         
+        # Adjust relevance criteria based on article count
+        strictness = "Be moderately selective" if len(articles) <= 3 else "Be strict"
+        
         relevance_prompt = f"""
-You are an expert news analyst. Given a user's question and a list of news articles, determine which articles are DIRECTLY relevant to answering the user's question.
+You are an expert news analyst. Given a user's question and a list of news articles, determine which articles are relevant to answering the user's question.
 
 User Question: "{original_question}"
 
 Articles to analyze:
 {json.dumps(article_summaries, indent=2)}
 
-For each article, determine if it is directly relevant to the user's question. An article is considered relevant if:
+For each article, determine if it is relevant to the user's question. An article is considered relevant if:
 1. It directly addresses the topic, countries, or events mentioned in the question
 2. It provides information that would help answer the user's question
-3. It's not just tangentially related but actually contains useful information for the response
+3. It contains useful context or background information related to the question
 
 Respond with a JSON object containing only the indices of the relevant articles:
 {{
@@ -96,7 +99,7 @@ Respond with a JSON object containing only the indices of the relevant articles:
     "reasoning": "Brief explanation of why these articles are relevant"
 }}
 
-Be strict - only include articles that truly help answer the user's question. If no articles are relevant, return an empty list.
+{strictness} - include articles that help provide context or answer the user's question. When very few articles are available, be more inclusive of articles that provide useful background or context.
 """
 
         print(f"🤖 [RelevanceFilter] Prompt length: {len(relevance_prompt)} characters")

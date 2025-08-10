@@ -456,7 +456,6 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
               {/* Citations */}
               {citations.length > 0 && uiState === 'completed' && (
                 <div className="mt-6 pt-4 border-t border-gray-700">
-                  <p className="text-sm text-gray-400 mb-3">Sources:</p>
                   <div className="flex flex-wrap gap-2">
                     {citations.map((citation, index) => (
                       <a

@@ -69,7 +69,8 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
       .replace(/\b(USA|US|the US|U\.S\.A\.|U\.S\.)\b/g, 'United States')
       .replace(/\bUnited States\b/g, 'United States') // Ensure consistency
       .replace(/\b(UK|England|Scotland|Wales|Britain|Great Britain)\b/g, 'United Kingdom')
-      .replace(/\b(Turkey|Türkiye)\b/g, 'Türkiye'); // Use official name with diacritic
+      .replace(/\b(Turkey|Türkiye)\b/g, 'Türkiye') // Use official name with diacritic
+      .replace(/\bGaza\b/g, 'Palestine');
   }, []);
 
   // Extract and format citations

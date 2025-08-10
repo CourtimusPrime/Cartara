@@ -197,13 +197,16 @@ Make the edited summary flow naturally without any in-text citations or article 
         }
 
     def _normalize_country_names(self, text: str) -> str:
-        """Normalize country name references, especially United States variations"""
+        """Normalize country name references"""
         import re
         
-        # Normalize United States references
+        # Normalize country name references
         patterns = [
             (r'\b(USA|US|the US|U\.S\.A\.|U\.S\.)\b', 'United States'),
             (r'\bthe United States\b', 'United States'),  # Remove redundant "the"
+            (r'\b(UK|England|Scotland|Wales|Britain|Great Britain)\b', 'United Kingdom'),
+            (r'\b(Turkey|Türkiye)\b', 'Türkiye'),  # Use official name with diacritic
+            (r'\bGaza\b', 'Palestine'),
         ]
         
         normalized = text

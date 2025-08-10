@@ -121,6 +121,7 @@ Please provide a concise but comprehensive summary:"""
             (r'\bthe United States\b', 'United States'),  # Remove redundant "the"
             (r'\b(UK|England|Scotland|Wales|Britain|Great Britain)\b', 'United Kingdom'),
             (r'\b(Turkey|Türkiye)\b', 'Türkiye'),  # Use official name with diacritic
+            (r'\bGaza\b', 'Palestine'),
         ]
         
         normalized = text

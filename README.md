@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗺️ Cartara
+A map-based visualizer of world news that allows you to see the relationships between countries in a new way. Ask a question about geopolitics, and Cartara will analyze the news to show you the countries involved on a 3D globe.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- 🌍 **3D Globe Visualization:** See the countries involved in a news story on an interactive 3D globe.
+- 🗣️ **Natural Language Questions:** Ask questions in plain English, like "What's been going on with Ukraine?".
+- 💞 **Relationship Analysis:** The connection between countries is colored to represent the nature of their relationship (e.g., conflict, alliance, trade).
+- 🤖 **AI-Powered Analysis:** Cartara uses a chain of AI agents to analyze your question, research the news, and provide a summary of the event.
+- **Real-time Updates:** The globe and analysis update in real-time as you ask new questions.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technology Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Frontend:**
+  - [Next.js](https://nextjs.org/)
+  - [React](https://reactjs.org/)
+  - [TypeScript](https://www.typescriptlang.org/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+- **Backend:**
+  - [Python](https://www.python.org/)
+  - [FastAPI](https://fastapi.tiangolo.com/)
+  - [OpenAI API](https://openai.com/api/)
+  - [Websockets](https://fastapi.tiangolo.com/advanced/websockets/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+To get a local copy running on your machine, follow these steps:
 
-To learn more about Next.js, take a look at the following resources:
+### 📦 Prerequisites
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Node.js](https://nodejs.org/en/) (v18.x or later)
+- [Python](https://www.python.org/downloads/) (v3.9 or later)
+- An [OpenAI API key](https://beta.openai.com/signup/)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🏗️ Installation
 
-## Deploy on Vercel
+1. **Clone the repo:**
+   ```sh
+   git clone https://github.com/courtimusprime/cartara.git
+   cd cartara
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install frontend dependencies:**
+   ```sh
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Install backend dependencies:**
+   ```sh
+   cd backend
+   uv venv .venv
+   source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables:**
+   - Create a `.env` file in the `backend` directory.
+   - Add your OpenAI API key to the `.env` file:
+     ```
+     OPENAI_API_KEY=your_openai_api_key
+     ```
+
+### Running the Application
+
+1. **Start the backend server:**
+   ```sh
+   cd backend
+   source .venv/bin/activate  # If not already activated
+   uvicorn main:app --reload
+   ```
+   The backend will be running at `http://localhost:8000`.
+
+2. **Start the frontend development server:**
+   In a new terminal, run:
+   ```sh
+   npm run dev
+   ```
+   The frontend will be running at `http://localhost:3000`.
+
+3. **Open your browser:**
+   Navigate to `http://localhost:3000` to see the application.
+
+## Usage
+
+- **Ask a question:** Use the prompt at the bottom of the page to ask a question about a geopolitical event.
+- **Manual selection:** You can also manually select two countries from the dropdowns at the top of the page to see their relationship.
+- **Explore the globe:** Click and drag the globe to rotate it. Use the scroll wheel to zoom in and out.

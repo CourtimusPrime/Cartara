@@ -325,7 +325,7 @@ export default function GlobeComponent({
     }));
 
   // Handle label clicks to show detailed tooltip
-  const handleLabelClick = (_label: unknown) => {
+  const handleLabelClick = () => {
     if (country1 && country2) {
       fetchTooltipData(country1, country2);
     }

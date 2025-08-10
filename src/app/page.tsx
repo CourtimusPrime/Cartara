@@ -10,7 +10,6 @@ export default function Home() {
   const [countries, setCountries] = useState({ features: [] });
   const [countryCoords, setCountryCoords] = useState([]);
   const [lineColor, setLineColor] = useState('rgba(255, 0, 0, 0.8)');
-  const [isAIPopulated, setIsAIPopulated] = useState(false);
 
   useEffect(() => {
     // Fetch country polygons
@@ -65,7 +64,6 @@ export default function Home() {
     // Clear any previous state to prevent contamination
     setCountry1('');
     setCountry2('');
-    setIsAIPopulated(false);
 
     // Update with new countries after clearing
     setTimeout(() => {
@@ -76,35 +74,11 @@ export default function Home() {
       const relationshipColor = getRelationshipColor(relationship);
       setLineColor(relationshipColor);
 
-      // Mark as AI populated and clear after 3 seconds
-      setIsAIPopulated(true);
-      setTimeout(() => setIsAIPopulated(false), 3000);
-
       console.log(
         `🤖 AI detected: ${detectedCountry1} ↔ ${detectedCountry2} (${relationship}) - Color: ${relationshipColor}`
       );
     }, 100);
   };
-
-  // Handle manual input changes
-  const handleManualCountry1Change = (value: string) => {
-    setCountry1(value);
-    setIsAIPopulated(false); // Clear AI indicator on manual change
-  };
-
-  const handleManualCountry2Change = (value: string) => {
-    setCountry2(value);
-    setIsAIPopulated(false); // Clear AI indicator on manual change
-  };
-
-  const colors = [
-    { name: 'Conflict (Red)', value: 'rgba(255, 0, 0, 0.8)' },
-    { name: 'Alliance (Green)', value: 'rgba(0, 255, 0, 0.8)' },
-    { name: 'Economic (Yellow)', value: 'rgba(255, 255, 0, 0.8)' },
-    { name: 'Tension (Orange)', value: 'rgba(255, 165, 0, 0.8)' },
-    { name: 'Diplomatic (White)', value: 'rgba(255, 255, 255, 0.8)' },
-    { name: 'General (Blue)', value: 'rgba(0, 0, 255, 0.8)' },
-  ];
 
   return (
     <main className="relative min-h-screen overflow-hidden">
@@ -121,7 +95,6 @@ export default function Home() {
           lineColor={lineColor}
         />
       </div>
-
 
       {/* Prompt Interface */}
       <PromptInterface onCountriesDetected={handleCountriesDetected} />

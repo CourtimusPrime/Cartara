@@ -1,4 +1,5 @@
 # 🗺️ Cartara
+
 A map-based visualizer of world news that allows you to see the relationships between countries in a new way. Ask a question about geopolitics, and Cartara will analyze the news to show you the countries involved on a 3D globe.
 
 ## Features
@@ -22,7 +23,6 @@ A map-based visualizer of world news that allows you to see the relationships be
   - [OpenAI API](https://openai.com/api/)
   - [Websockets](https://fastapi.tiangolo.com/advanced/websockets/)
 
-
 ## 🚀 Getting Started
 
 To get a local copy running on your machine, follow these steps:
@@ -36,17 +36,20 @@ To get a local copy running on your machine, follow these steps:
 ### 🏗️ Installation
 
 1. **Clone the repo:**
+
    ```sh
    git clone https://github.com/courtimusprime/cartara.git
    cd cartara
    ```
 
 2. **Install frontend dependencies:**
+
    ```sh
    npm install
    ```
 
 3. **Install backend dependencies:**
+
    ```sh
    cd backend
    uv venv .venv
@@ -64,18 +67,22 @@ To get a local copy running on your machine, follow these steps:
 ### Running the Application
 
 1. **Start the backend server:**
+
    ```sh
    cd backend
    source .venv/bin/activate  # If not already activated
    uvicorn main:app --reload
    ```
+
    The backend will be running at `http://localhost:8000`.
 
 2. **Start the frontend development server:**
    In a new terminal, run:
+
    ```sh
    npm run dev
    ```
+
    The frontend will be running at `http://localhost:3000`.
 
 3. **Open your browser:**

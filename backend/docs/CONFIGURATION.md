@@ -7,11 +7,13 @@ This document explains how to configure the news analysis agent chain system.
 The system uses a `.config` file located in the `backend/` directory to store sensitive API keys and configuration settings.
 
 ### File Location
+
 ```
 backend/.config
 ```
 
 ### Security Note
+
 - The `.config` file is automatically ignored by Git (listed in `.gitignore`)
 - Never commit API keys to version control
 - Keep your API keys secure and private
@@ -35,12 +37,14 @@ cnn.com
 ## Required API Keys
 
 ### NewsAPI Key
+
 - **Purpose**: Fetches current news articles from reputable sources
 - **Get your key**: [https://newsapi.org/register](https://newsapi.org/register)
 - **Free tier**: 1,000 requests per month
 - **Format**: `NEWSAPI_API_KEY=your_key_here`
 
-### OpenAI API Key  
+### OpenAI API Key
+
 - **Purpose**: Powers the AI agents for text analysis and summarization
 - **Get your key**: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 - **Usage**: Pay-per-use pricing
@@ -51,11 +55,13 @@ cnn.com
 The system includes 46+ reputable news sources by default:
 
 ### International News Agencies
+
 - Reuters (reuters.com)
 - Associated Press (apnews.com)
 - Agence France-Presse (afp.com)
 
 ### Major Broadcasters
+
 - BBC (bbc.com, bbc.co.uk)
 - CNN (cnn.com)
 - NPR (npr.org)
@@ -64,6 +70,7 @@ The system includes 46+ reputable news sources by default:
 - Al Jazeera (aljazeera.com)
 
 ### Major Publications
+
 - The New York Times (nytimes.com)
 - The Washington Post (washingtonpost.com)
 - The Wall Street Journal (wsj.com)
@@ -90,6 +97,7 @@ python test_config.py
 ```
 
 This will show:
+
 - ✅ API key status (configured/missing)
 - 📡 Number of news sources loaded
 - 🔍 Configuration file status
@@ -109,17 +117,20 @@ print(f"Loaded {len(REPUTABLE_SOURCES)} news sources")
 ## Troubleshooting
 
 ### "API key not configured" errors
+
 1. Check that `.config` file exists in `backend/` directory
 2. Verify API keys are correctly formatted
 3. Restart the server after configuration changes
 4. Run `python test_config.py` to diagnose issues
 
 ### "No news sources" errors
+
 1. Ensure news sources are listed as domain names
 2. One source per line in the `.config` file
 3. Check that sources follow the format: `domain.com`
 
 ### Configuration not loading
+
 1. Restart the FastAPI server
 2. Check file permissions on `.config`
 3. Verify file encoding is UTF-8

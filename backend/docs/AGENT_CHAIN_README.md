@@ -7,6 +7,7 @@ This implementation provides a 5-agent chain system that converts natural langua
 ## Architecture
 
 ### Agent Flow
+
 1. **Transformer Agent** → Extract keywords from user question
 2. **Researcher Agent** → Fetch articles from reputable sources using NewsAPI
 3. **Summarizer Agent** → Create coherent summary from articles
@@ -16,44 +17,50 @@ This implementation provides a 5-agent chain system that converts natural langua
 ## API Usage
 
 ### Endpoint
+
 ```
 POST /analyze-news
 ```
 
 ### Request Body
+
 ```json
 {
-    "question": "What's the latest with the war in Ukraine?"
+  "question": "What's the latest with the war in Ukraine?"
 }
 ```
 
 ### Response Format
+
 ```json
 {
-    "success": true,
-    "data": {
-        "country_1": "Ukraine",
-        "country_2": "Russia",
-        "relationship": "war",
-        "country_1_paragraph": "Recent developments in Ukraine...",
-        "country_2_paragraph": "Russia's current situation...",
-        "relationship_paragraph": "The ongoing conflict between...",
-        "summary": "Full summary of recent events..."
-    },
-    "error": null
+  "success": true,
+  "data": {
+    "country_1": "Ukraine",
+    "country_2": "Russia",
+    "relationship": "war",
+    "country_1_paragraph": "Recent developments in Ukraine...",
+    "country_2_paragraph": "Russia's current situation...",
+    "relationship_paragraph": "The ongoing conflict between...",
+    "summary": "Full summary of recent events..."
+  },
+  "error": null
 }
 ```
 
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 OPENAI_API_KEY=your_openai_api_key
 NEWSAPI_API_KEY=your_newsapi_key
 ```
 
 ### Reputable Sources
+
 The system is configured to only fetch articles from predefined reputable news sources:
+
 - Reuters, AP News, BBC, CNN, NPR
 - WSJ, NYTimes, Washington Post, The Guardian
 - ABC News, CBS News, NBC News, Politico
@@ -62,6 +69,7 @@ The system is configured to only fetch articles from predefined reputable news s
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -69,6 +77,7 @@ pip install -r requirements.txt
 2. Set environment variables in `.env` file
 
 3. Run the server:
+
 ```bash
 python main.py
 ```
@@ -76,11 +85,13 @@ python main.py
 ## Testing
 
 ### Direct Agent Chain Test
+
 ```bash
 python test_agent_chain.py
 ```
 
 ### API Endpoint Test
+
 ```bash
 python example_usage.py
 ```
@@ -88,8 +99,9 @@ python example_usage.py
 ## Error Handling
 
 The system includes comprehensive error handling:
+
 - Invalid API keys
-- No articles found from reputable sources  
+- No articles found from reputable sources
 - Article parsing failures
 - LLM processing errors
 - JSON parsing fallbacks

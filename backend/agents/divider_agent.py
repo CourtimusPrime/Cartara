@@ -14,10 +14,18 @@ class DividerAgent(BaseAgent):
     async def process(self, input_data: AgentInput) -> AgentOutput:
         try:
             data = input_data.data
+            print(f"📝 [Divider] Input received - Data type: {type(data)}")
+            print(f"📝 [Divider] Data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
+            
             summary_text = data.get("summary", "")
             countries_data = data.get("countries", {})
+            
+            print(f"📝 [Divider] Summary length: {len(summary_text)}")
+            print(f"📝 [Divider] Summary preview: {summary_text[:150] if summary_text else 'None'}...")
+            print(f"📝 [Divider] Countries data: {countries_data}")
 
             if not summary_text:
+                print("❌ [Divider] ERROR: No summary text provided")
                 return self.create_output(
                     data={}, success=False, error_message="No summary text provided for division"
                 )
@@ -25,6 +33,11 @@ class DividerAgent(BaseAgent):
             country_1 = countries_data.get("country_1", "")
             country_2 = countries_data.get("country_2", "")
             relationship = countries_data.get("relationship", "")
+
+            print(f"📝 [Divider] Creating paragraphs for:")
+            print(f"   🏳️ Country 1: '{country_1}'")
+            print(f"   🏳️ Country 2: '{country_2}'")
+            print(f"   🤝 Relationship: '{relationship}'")
 
             self.log_info(
                 f"Creating structured paragraphs for {country_1}, {country_2}, relationship: {relationship}"
@@ -34,6 +47,8 @@ class DividerAgent(BaseAgent):
                 summary_text, country_1, country_2, relationship
             )
 
+            print(f"✅ [Divider] Successfully created structured paragraphs")
+            print(f"📝 [Divider] Result keys: {list(divided_content.keys()) if isinstance(divided_content, dict) else 'Not a dict'}")
             self.log_info("Successfully created structured paragraphs")
 
             return self.create_output(

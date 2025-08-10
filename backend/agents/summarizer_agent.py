@@ -14,15 +14,28 @@ class SummarizerAgent(BaseAgent):
     async def process(self, input_data: AgentInput) -> AgentOutput:
         try:
             articles = input_data.data
+            print(f"📄 [Summarizer] Input received - Article count: {len(articles) if articles else 0}")
+            print(f"📄 [Summarizer] Articles type: {type(articles)}")
+            
+            if articles:
+                print(f"📄 [Summarizer] Article sources: {[article.get('source', 'Unknown') for article in articles]}")
+                for i, article in enumerate(articles):
+                    print(f"📄 [Summarizer] Article {i+1}: '{article.get('title', 'No title')[:50]}...'")
+                    print(f"   📝 Content length: {len(article.get('content', ''))}")
+            
             if not articles:
+                print("❌ [Summarizer] ERROR: No articles provided")
                 return self.create_output(
                     data="", success=False, error_message="No articles provided for summarization"
                 )
 
+            print(f"📄 [Summarizer] Starting summarization of {len(articles)} articles")
             self.log_info(f"Summarizing {len(articles)} articles")
 
             summary = await self._create_summary(articles)
 
+            print(f"✅ [Summarizer] Created summary with {len(summary)} characters")
+            print(f"📄 [Summarizer] Summary preview: {summary[:200]}...")
             self.log_info(f"Created summary with {len(summary)} characters")
 
             return self.create_output(
@@ -42,20 +55,30 @@ class SummarizerAgent(BaseAgent):
 
     async def _create_summary(self, articles: List[Dict]) -> str:
         if not articles:
+            print("⚠️  [Summarizer] No articles to summarize")
             return ""
 
+        print(f"📄 [Summarizer] Preparing {len(articles)} articles for summarization...")
+        
         # Prepare article content for summarization
         articles_text = []
         for i, article in enumerate(articles, 1):
+            content = article.get('content', '')
+            truncated_content = content[:1000]
+            print(f"📄 [Summarizer] Article {i} - Title: '{article.get('title', 'No title')[:50]}...'")
+            print(f"   📰 Source: {article.get('source', 'Unknown')}")
+            print(f"   📝 Content length: {len(content)} -> {len(truncated_content)} (truncated)")
+            
             article_text = f"""
 Article {i}:
 Title: {article.get('title', 'No title')}
 Source: {article.get('source', 'Unknown')}
-Content: {article.get('content', '')[:1000]}...
+Content: {truncated_content}...
 """
             articles_text.append(article_text)
 
         combined_articles = "\n".join(articles_text)
+        print(f"📄 [Summarizer] Combined articles text length: {len(combined_articles)} characters")
 
         summarization_prompt = f"""
 You are a professional news analyst. Please create a coherent, factual summary of the following news articles about current events.

@@ -15,7 +15,11 @@ class KeywordExtractorAgent(BaseAgent):
     async def process(self, input_data: AgentInput) -> AgentOutput:
         try:
             summary_text = input_data.data
+            print(f"🔍 [KeywordExtractor] Input received - Summary length: {len(summary_text) if summary_text else 0}")
+            print(f"🔍 [KeywordExtractor] Summary preview: {summary_text[:200] if summary_text else 'None'}...")
+            
             if not summary_text or not summary_text.strip():
+                print("❌ [KeywordExtractor] ERROR: No summary text provided")
                 return self.create_output(
                     data={"country_1": "", "country_2": "", "relationship": ""},
                     success=False,
@@ -23,9 +27,11 @@ class KeywordExtractorAgent(BaseAgent):
                 )
 
             self.log_info("Extracting countries and relationship from summary")
+            print(f"🔍 [KeywordExtractor] Starting country and relationship extraction...")
 
             extraction_result = await self._extract_countries_and_relationship(summary_text)
 
+            print(f"✅ [KeywordExtractor] Extraction completed: {extraction_result}")
             self.log_info(f"Extracted: {extraction_result}")
 
             return self.create_output(
@@ -59,6 +65,9 @@ Please respond in this exact JSON format:
 
 Focus on the most significant countries and their primary relationship. If there's only one main country involved, leave country_2 empty and describe the relationship as "domestic issues" or similar."""
 
+        print(f"🤖 [KeywordExtractor] Sending prompt to OpenAI...")
+        print(f"🤖 [KeywordExtractor] Prompt length: {len(extraction_prompt)} chars")
+        
         response = await self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": extraction_prompt}],
@@ -67,17 +76,22 @@ Focus on the most significant countries and their primary relationship. If there
         )
 
         response_text = response.choices[0].message.content.strip()
+        print(f"🤖 [KeywordExtractor] OpenAI response: {response_text}")
+        print(f"🤖 [KeywordExtractor] Response length: {len(response_text)} chars")
 
         # Try to parse JSON response
         try:
             import json
 
             result = json.loads(response_text)
+            print(f"✅ [KeywordExtractor] JSON parsed successfully: {result}")
 
             # Validate and clean the response
             country_1 = result.get("country_1", "").strip()
             country_2 = result.get("country_2", "").strip()
             relationship = result.get("relationship", "").strip()
+
+            print(f"🔍 [KeywordExtractor] Cleaned results - Country 1: '{country_1}', Country 2: '{country_2}', Relationship: '{relationship}'")
 
             return {
                 "country_1": country_1,
@@ -85,8 +99,10 @@ Focus on the most significant countries and their primary relationship. If there
                 "relationship": relationship,
             }
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             # Fallback: try to extract using regex patterns
+            print(f"❌ [KeywordExtractor] JSON parsing failed: {e}")
+            print(f"🔄 [KeywordExtractor] Falling back to regex extraction")
             self.log_info("JSON parsing failed, using fallback extraction")
             return self._fallback_extraction(response_text)
 

@@ -12,6 +12,9 @@ class TransformerAgent(BaseAgent):
     async def process(self, input_data: AgentInput) -> AgentOutput:
         try:
             user_prompt = input_data.data
+            print(f"🔄 [Transformer] Input received - User prompt: '{user_prompt}'")
+            print(f"🔄 [Transformer] Prompt length: {len(user_prompt)} characters")
+            
             self.log_info(f"Processing user prompt: {user_prompt}")
 
             extraction_prompt = f"""
@@ -33,6 +36,9 @@ Keywords: Ukraine, war, Russia, conflict
 User prompt: {user_prompt}
 Keywords:"""
 
+            print(f"🤖 [Transformer] Sending keyword extraction request to OpenAI...")
+            print(f"🤖 [Transformer] Extraction prompt length: {len(extraction_prompt)} characters")
+
             response = await self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": extraction_prompt}],
@@ -43,6 +49,9 @@ Keywords:"""
             keywords_text = response.choices[0].message.content.strip()
             keywords = [kw.strip() for kw in keywords_text.split(",") if kw.strip()]
 
+            print(f"🤖 [Transformer] OpenAI response: '{keywords_text}'")
+            print(f"✅ [Transformer] Extracted {len(keywords)} keywords: {keywords}")
+            
             self.log_info(f"Extracted keywords: {keywords}")
 
             return self.create_output(

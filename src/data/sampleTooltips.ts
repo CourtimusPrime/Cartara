@@ -1,4 +1,4 @@
-import { CountryTooltipData, RelationshipTooltipData } from '@/types/tooltip';
+import type { CountryTooltipData, RelationshipTooltipData } from '@/types/tooltip';
 
 export const sampleCountryData: Record<string, CountryTooltipData> = {
   ukraine: {

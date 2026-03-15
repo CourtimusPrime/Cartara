@@ -1,4 +1,4 @@
-import { CountryTooltipData, RelationshipTooltipData } from '@/types/tooltip';
+import type { CountryTooltipData, RelationshipTooltipData } from '@/types/tooltip';
 
 interface CountryTooltipProps {
   data: CountryTooltipData;
@@ -26,8 +26,8 @@ export const CountryTooltip: React.FC<CountryTooltipProps> = ({ data }) => {
         <div>
           <p className="text-xs text-gray-400 mb-1">Sources:</p>
           <div className="flex flex-wrap gap-1">
-            {data.sources.map((source, index) => (
-              <span key={index} className="text-xs bg-gray-700 px-2 py-1 rounded">
+            {data.sources.map(source => (
+              <span key={source} className="text-xs bg-gray-700 px-2 py-1 rounded">
                 {source}
               </span>
             ))}
@@ -61,8 +61,8 @@ export const RelationshipTooltip: React.FC<RelationshipTooltipProps> = ({ data }
         <div>
           <p className="text-xs text-gray-400 mb-1">Sources:</p>
           <div className="flex flex-wrap gap-1">
-            {data.sources.map((source, index) => (
-              <span key={index} className="text-xs bg-gray-700 px-2 py-1 rounded">
+            {data.sources.map(source => (
+              <span key={source} className="text-xs bg-gray-700 px-2 py-1 rounded">
                 {source}
               </span>
             ))}

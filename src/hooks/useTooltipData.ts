@@ -39,7 +39,7 @@ export const useTooltipData = () => {
     try {
       const question = `What's the current situation between ${country1} and ${country2}?`;
 
-      const response = await fetch('http://localhost:8000/analyze-news', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

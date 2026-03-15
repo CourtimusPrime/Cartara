@@ -243,7 +243,7 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/analyze-news', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

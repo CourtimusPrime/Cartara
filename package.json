@@ -10,14 +10,17 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.41",
     "@types/three": "^0.179.0",
+    "ai": "^6.0.116",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-globe.gl": "^2.35.0",
     "three": "^0.179.1",
     "use-debounce": "^10.0.5",
-    "vercel": "^44.7.3"
+    "vercel": "^44.7.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 
 const Globe = dynamic(() => import('react-globe.gl'), {
   ssr: false,
   loading: () => <div className="flex items-center justify-center h-full">Loading Globe...</div>,
 });
-import { useDebouncedCallback } from 'use-debounce';
+
 import * as THREE from 'three';
+import { useDebouncedCallback } from 'use-debounce';
 import { useTooltipData } from '@/hooks/useTooltipData';
 
 interface Country {

@@ -1,4 +1,4 @@
-import { SERPER_API_KEY, MAX_ARTICLES } from './config';
+import { MAX_ARTICLES, SERPER_API_KEY } from './config';
 import type { Article } from './types';
 
 const COUNTRY_KEYWORDS = new Set([

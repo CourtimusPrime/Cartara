@@ -4,11 +4,11 @@ A geopolitical intelligence visualization tool that transforms natural language 
 
 ## Features
 
-- **3D Globe Visualization** - Interactive globe with color-coded relationship arcs between countries
-- **Natural Language Questions** - Ask questions like "What's happening between Russia and Ukraine?"
-- **AI Agent Chain** - Multi-step pipeline: keyword extraction, news search, relevance filtering, synthesis, and analysis
-- **Source Citations** - Every analysis includes cited news sources with links
-- **Relationship Mapping** - Color-coded arcs show conflict (red), alliance (green), trade (yellow), tensions (orange), and diplomatic (white) relationships
+- **🌍 3D Globe Visualization** - Interactive globe with color-coded relationship arcs between countries
+- **🗣️ Natural Language Questions** - Ask questions like "What's happening between Russia and Ukraine?"
+- **🤖 AI Agent Chain** - Multi-step pipeline: keyword extraction, news search, relevance filtering, synthesis, and analysis
+- **📚 Source Citations** - Every analysis includes cited news sources with links
+- **🔗 Relationship Mapping** - Color-coded arcs show conflict (red), alliance (green), trade (yellow), tensions (orange), and diplomatic (white) relationships
 
 ## Tech Stack
 
@@ -16,7 +16,7 @@ A geopolitical intelligence visualization tool that transforms natural language 
 - **Styling:** Tailwind CSS 4
 - **3D Visualization:** react-globe.gl, Three.js
 - **AI:** Vercel AI SDK with OpenRouter (flexible model selection)
-- **News Data:** Serper.dev (Google News search)
+- **News Data:** [Serper.dev](https://serper.dev) (Google News search)
 - **Deployment:** Railway
 
 ## Getting Started
@@ -32,9 +32,9 @@ A geopolitical intelligence visualization tool that transforms natural language 
 1. **Clone and install:**
 
    ```sh
-   git clone https://github.com/courtimusprime/cartara.git
-   cd cartara
-   npm install
+   git clone https://github.com/courtimusprime/Cartara.git
+   cd Cartara
+   bun install
    ```
 
 2. **Configure environment:**
@@ -53,41 +53,37 @@ A geopolitical intelligence visualization tool that transforms natural language 
 3. **Run locally:**
 
    ```sh
-   npm run dev
+   cd src && bun install && bun run dev
    ```
 
    Open [http://localhost:3000](http://localhost:3000).
 
 ### Available Scripts
 
-- `npm run dev` - Development server with Turbopack
-- `npm run build` - Production build
-- `npm start` - Production server
-- `npm run lint` - ESLint
-- `npm run format` - Prettier
+- `bun run dev` - Development server with Turbopack
+- `bun run build` - Production build
+- `bun start` - Production server
+- `bun run lint` - ESLint
+- `bun run format` - Prettier
 
 ## Architecture
 
-```
-User Question
-    |
-    v
-[Transformer] Extract keywords
-    |
-    v
-[Researcher] Search news via Serper.dev
-    |
-    v
-[Relevance Filter] AI filters relevant articles
-    |
-    v
-[Synthesizer] Summarize + edit + cite
-    |
-    v
-[Analyzer] Extract countries + structure paragraphs
-    |
-    v
-3D Globe Visualization
+```mermaid
+flowchart TD
+  user((User))
+  transformer[/Transformer<br><br>Extract keywords/]
+  researcher[/Reseracher<br><br>Search news with Serper.dev/]
+  filter[/Filter<br><br>AI filters relevant articles/]
+  synthesizer[/Synthesizer<br><br>AI summarizes, edits, and cites articles/]
+  analyzer[/Analyzer<br><br>AI extracts countries and structures paragraphs/]
+  visualizer((3D Globe<br>Visualization))
+
+  user-->|Natural language question| transformer
+  transformer-->researcher
+  researcher-->filter
+  filter-->synthesizer
+  synthesizer-->analyzer
+  analyzer-->visualizer
 ```
 
 All agents run as Next.js API routes (`/api/analyze`) using the Vercel AI SDK with OpenRouter for flexible, cost-optimized model selection.

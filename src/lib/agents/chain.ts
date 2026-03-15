@@ -1,9 +1,9 @@
-import type { AgentChainResponse, ProgressCallback } from './types';
-import { extractKeywords } from './transformer';
-import { fetchArticles } from './researcher';
-import { filterRelevantArticles } from './relevance-filter';
-import { synthesize } from './synthesizer';
 import { analyze } from './analyzer';
+import { filterRelevantArticles } from './relevance-filter';
+import { fetchArticles } from './researcher';
+import { synthesize } from './synthesizer';
+import { extractKeywords } from './transformer';
+import type { AgentChainResponse, ProgressCallback } from './types';
 
 export async function processQuestion(
   question: string,

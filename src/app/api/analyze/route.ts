@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { processQuestion } from '@/lib/agents/chain';
+import { PromptInjectionError, sanitizeUserInput } from '@/lib/agents/sanitize';
 import { getCached, setCached } from '@/lib/cache';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { sanitizeUserInput, PromptInjectionError } from '@/lib/agents/sanitize';
 
 const MAX_PROMPT_LENGTH = 500;
 

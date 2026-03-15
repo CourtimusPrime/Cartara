@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import type { CountryTooltipData, RelationshipTooltipData, TooltipState } from '@/types/tooltip';
+import { useCallback, useState } from 'react';
 import { sampleCountryData, sampleRelationshipData } from '@/data/sampleTooltips';
+import type { CountryTooltipData, RelationshipTooltipData, TooltipState } from '@/types/tooltip';
 
 interface AgentChainResponse {
   success: boolean;

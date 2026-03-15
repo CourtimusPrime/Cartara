@@ -83,6 +83,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* Globe Background */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: preventing text drag on globe container */}
       <div
         className="absolute top-0 left-0 w-full h-full z-0"
         onDragStart={e => e.preventDefault()}

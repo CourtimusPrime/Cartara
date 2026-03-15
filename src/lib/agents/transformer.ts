@@ -2,6 +2,7 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 
 import { fastModel } from './config';
+import { delimitUserInput } from './sanitize';
 
 const KeywordsSchema = z.object({
   keywords: z
@@ -15,7 +16,9 @@ export async function extractKeywords(question: string): Promise<string[]> {
   const { object } = await generateObject({
     model: fastModel,
     schema: KeywordsSchema,
-    prompt: `Extract the most important keywords for searching current events and news from this user question: "${question}"
+    prompt: `Extract the most important keywords for searching current events and news from the user question below.
+
+${delimitUserInput(question)}
 
 Focus on:
 - Country names

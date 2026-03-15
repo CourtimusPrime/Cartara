@@ -281,7 +281,7 @@ export default function GlobeComponent({
     } else if (globeEl.current) {
       globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2 }, 2000);
     }
-  }, [country1, country2, country1Coords, country2Coords]);
+  }, [country1Coords, country2Coords]);
 
   const handleZoom = (pov: any) => {
     const { altitude } = pov;

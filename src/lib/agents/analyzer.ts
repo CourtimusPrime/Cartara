@@ -106,8 +106,8 @@ function fallbackAnalysis(summary: string): AnalysisOutput {
     country_1: found[0] || 'Unknown',
     country_2: found[1] || '',
     relationship,
-    country_1_paragraph: sentences.slice(0, third).join('. ') + '.',
-    country_2_paragraph: sentences.slice(third, third * 2).join('. ') + '.',
-    relationship_paragraph: sentences.slice(third * 2).join('. ') + '.',
+    country_1_paragraph: `${sentences.slice(0, third).join('. ')}.`,
+    country_2_paragraph: `${sentences.slice(third, third * 2).join('. ')}.`,
+    relationship_paragraph: `${sentences.slice(third * 2).join('. ')}.`,
   };
 }

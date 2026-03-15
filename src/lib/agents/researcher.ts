@@ -51,7 +51,7 @@ export async function fetchArticles(keywords: string[]): Promise<Article[]> {
     throw new Error('SERPER_API_KEY is not configured');
   }
 
-  const query = buildQuery(keywords) + ' news';
+  const query = `${buildQuery(keywords)} news`;
 
   const response = await fetch('https://google.serper.dev/news', {
     method: 'POST',

@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 import { processQuestion } from '@/lib/agents/chain';
 import { getCached, setCached } from '@/lib/cache';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { sanitizeUserInput, PromptInjectionError } from '@/lib/agents/sanitize';
 
 const MAX_PROMPT_LENGTH = 500;
 
@@ -57,8 +58,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Sanitize input against prompt injection
+  let sanitizedQuestion: string;
+  try {
+    sanitizedQuestion = sanitizeUserInput(question);
+  } catch (e) {
+    if (e instanceof PromptInjectionError) {
+      return NextResponse.json(
+        { success: false, error: { type: 'prompt_injection', message: e.message } },
+        { status: 400 }
+      );
+    }
+    throw e;
+  }
+
   // Check cache
-  const cached = getCached(question);
+  const cached = getCached(sanitizedQuestion);
   if (cached) {
     return NextResponse.json(cached, {
       headers: { 'X-RateLimit-Remaining': String(remaining), 'X-Cache': 'HIT' },
@@ -66,11 +81,11 @@ export async function POST(request: NextRequest) {
   }
 
   // Process question through agent chain
-  const result = await processQuestion(question);
+  const result = await processQuestion(sanitizedQuestion);
 
   // Cache successful results
   if (result.success) {
-    setCached(question, result);
+    setCached(sanitizedQuestion, result);
   }
 
   return NextResponse.json(result, {

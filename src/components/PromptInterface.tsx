@@ -471,6 +471,7 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
                 </h3>
                 {uiState === 'completed' && (
                   <button
+                    type="button"
                     onClick={() => {
                       setUIState('hidden');
                       setIsVisible(false);
@@ -503,9 +504,9 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
               {citations.length > 0 && uiState === 'completed' && (
                 <div className="mt-6 pt-4 border-t border-gray-700">
                   <div className="flex flex-wrap gap-2">
-                    {citations.map((citation, index) => (
+                    {citations.map(citation => (
                       <a
-                        key={index}
+                        key={citation.article_url}
                         href={citation.article_url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -534,6 +535,7 @@ export default function PromptInterface({ onCountriesDetected }: PromptInterface
                   <p className="text-red-100">{error}</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setError('')}
                   className="text-red-400 hover:text-white text-xl leading-none hover:bg-red-700 rounded px-2 py-1 transition-colors"
                   aria-label="Close error"
